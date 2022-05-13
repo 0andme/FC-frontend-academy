@@ -4,11 +4,11 @@
 
 #### 실습 환경
 
-node
-typescript | `npm i -g typescript`
-vs code | extension- JavaScript Debugger
-parcel | `npm i -g parcel-bundler`
+- node
+- typescript | `npm i -g typescript`
+- vs code | extension - JavaScript Debugger
+- parcel | `npm i -g parcel-bundler`
 
 #### ch2 js와 ts
 
-[log](ch2.md)
+[ch2.md](ch2.md)
