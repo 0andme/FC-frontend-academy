@@ -9,20 +9,14 @@ const ul = document.createElement("ul");
 container.appendChild(ul);
 container.appendChild(content);
 
-// 요청 초기화
-ajax.open("GET", NEWS_URL, false);
-//요청 보내기
-ajax.send();
-// 응답 데이터 가져오기
-const newsFeed = JSON.parse(ajax.response);
+// api 뉴스 데이터 가져오기
+const newsFeed = getData(NEWS_URL);
 
 // 뉴스 타이틀 클릭시 변경되는 hash 이벤트
 window.addEventListener("hashchange", function () {
   // content 가져오기
   const id = this.location.hash.substring(1);
-  ajax.open("GET", CONTENT_URL.replace("@id", id), false);
-  ajax.send();
-  const newsContent = JSON.parse(ajax.response);
+  const newsContent = getData(CONTENT_URL.replace("@id", id));
   // 클릭된 타이틀의 타이틀 출력
   const title = this.document.createElement("h1");
   content.appendChild(title);
@@ -41,4 +35,15 @@ for (let i = 0; i < 10; i++) {
 
   // ul.appendChild(div.children[0]);
   ul.appendChild(div.firstElementChild);
+}
+
+// api 호출 함수
+
+function getData(url) {
+  // 요청 초기화
+  ajax.open("GET", url, false);
+  //요청 보내기
+  ajax.send();
+  // 응답 데이터 가져오기
+  return JSON.parse(ajax.response);
 }
