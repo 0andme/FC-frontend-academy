@@ -28,13 +28,17 @@ window.addEventListener("hashchange", function () {
   content.appendChild(title);
   title.innerHTML = newsContent.title;
 });
+
 // 10개의 뉴스 타이틀
 for (let i = 0; i < 10; i++) {
-  const li = document.createElement("li");
-  const a = document.createElement("a");
-  a.innerHTML = `${newsFeed[i].title}(${newsFeed[i].comments_count})`;
-  a.href = `#${newsFeed[i].id}`;
+  const div = document.createElement("div");
+  div.innerHTML = `
+  <ul>
+    <li>
+      <a href='#${newsFeed[i].id}'>${newsFeed[i].title}(${newsFeed[i].comments_count})</a>
+    </li>
+  </ul>`;
 
-  ul.appendChild(li);
-  li.appendChild(a);
+  // ul.appendChild(div.children[0]);
+  ul.appendChild(div.firstElementChild);
 }
