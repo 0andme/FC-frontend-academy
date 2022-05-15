@@ -14,13 +14,27 @@ function getData(url) {
   // 응답 데이터 가져오기
   return JSON.parse(ajax.response);
 }
+// 글 목록 가져오는 함수
+function newsFeed() {
+  // api 뉴스 데이터 가져오기
+  const newsFeed = getData(NEWS_URL);
+  // 10개의 뉴스 타이틀
+  const newsList = [];
+  newsList.push("<ul>");
+  for (let i = 0; i < 10; i++) {
+    newsList.push(`
+  <ul>
+    <li>
+      <a href='#${newsFeed[i].id}'>${newsFeed[i].title}(${newsFeed[i].comments_count})</a>
+    </li>
+  </ul>`);
+  }
+  newsList.push("</ul>");
+  container.innerHTML = newsList.join("");
+}
 
-// api 뉴스 데이터 가져오기
-const newsFeed = getData(NEWS_URL);
-
-// 뉴스 타이틀 클릭시 변경되는 hash 이벤트
-window.addEventListener("hashchange", function () {
-  // content 가져오기
+// 뉴스 content 가져오기
+function newsDetail() {
   const id = this.location.hash.substring(1);
   const newsContent = getData(CONTENT_URL.replace("@id", id));
   // 클릭된 타이틀의 타이틀 출력
@@ -29,18 +43,18 @@ window.addEventListener("hashchange", function () {
   <div>
     <a href='#'>목록으로</a>
   </div>`;
-});
-
-// 10개의 뉴스 타이틀
-const newsList = [];
-newsList.push("<ul>");
-for (let i = 0; i < 10; i++) {
-  newsList.push(`
-  <ul>
-    <li>
-      <a href='#${newsFeed[i].id}'>${newsFeed[i].title}(${newsFeed[i].comments_count})</a>
-    </li>
-  </ul>`);
 }
-newsList.push("</ul>");
-container.innerHTML = newsList.join("");
+// 라우터 함수
+function router() {
+  const routePath = location.hash;
+  if (routePath === "") {
+    newsFeed();
+  } else {
+    newsDetail();
+  }
+}
+
+// 뉴스 타이틀 클릭시 변경되는 hash 이벤트
+window.addEventListener("hashchange", router);
+
+router();
