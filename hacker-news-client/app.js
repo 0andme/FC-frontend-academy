@@ -1,11 +1,11 @@
 const ajax = new XMLHttpRequest();
-// urls
+// value urls
 const NEWS_URL = "https://api.hnpwa.com/v0/news/1.json";
 const CONTENT_URL = "https://api.hnpwa.com/v0/item/@id.json";
 
 const container = document.getElementById("root");
 
-// api 호출 함수
+// func api 호출 함수
 function getData(url) {
   // 요청 초기화
   ajax.open("GET", url, false);
@@ -14,7 +14,7 @@ function getData(url) {
   // 응답 데이터 가져오기
   return JSON.parse(ajax.response);
 }
-// 글 목록 가져오는 함수
+// func 글 목록 가져오기
 function newsFeed() {
   // api 뉴스 데이터 가져오기
   const newsFeed = getData(NEWS_URL);
@@ -33,7 +33,7 @@ function newsFeed() {
   container.innerHTML = newsList.join("");
 }
 
-// 뉴스 content 가져오기
+// func 뉴스 content 가져오기
 function newsDetail() {
   const id = this.location.hash.substring(1);
   const newsContent = getData(CONTENT_URL.replace("@id", id));
@@ -44,7 +44,7 @@ function newsDetail() {
     <a href='#'>목록으로</a>
   </div>`;
 }
-// 라우터 함수
+// func 라우터
 function router() {
   const routePath = location.hash;
   if (routePath === "") {
@@ -54,7 +54,7 @@ function router() {
   }
 }
 
-// 뉴스 타이틀 클릭시 변경되는 hash 이벤트
+// event hash변경시 라우터 함수 호출
 window.addEventListener("hashchange", router);
-
+// 호출 라우터 함수
 router();
