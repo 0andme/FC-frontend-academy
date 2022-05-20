@@ -114,13 +114,34 @@ function newsDetail() {
       <div class="text-gray-400 h-20">
         ${newsContent.content}
       </div>
-
       {{__comments__}}
-
     </div>
   </div>
 `;
-  container.innerHTML = template;
+  // func 댓글 목록 함수
+  function makeComment(comments, called = 0) {
+    const commentString = [];
+    for (let i = 0; i < comments.length; i++) {
+      commentString.push(`
+        <div style="padding-left: ${called * 40}px;" class="mt-4">
+          <div class="text-gray-400">
+            <i class="fa fa-sort-up mr-2"></i>
+            <strong>${comments[i].user}</strong> ${comments[i].time_ago}
+          </div>
+          <p class="text-gray-700">${comments[i].content}</p>
+        </div>      
+      `);
+      // 재귀 대댓글 호출
+      if (comments[i].comments.length > 0) {
+        commentString.push(makeComment(comments[i].comments, called + 1));
+      }
+    }
+    return commentString.join("");
+  }
+  container.innerHTML = template.replace(
+    "{{__comments__}}",
+    makeComment(newsContent.comments)
+  );
 }
 // func 라우터
 function router() {
