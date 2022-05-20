@@ -27,3 +27,6 @@
     2. cdN방법 `<script src="https://cdn.tailwindcss.com"></script>`
 13. font awesome
     1. https://cdnjs.com/에서 font awesome의 cdn 가져오기
+14. 읽음 표시 기능 추가
+    1. 기존 받아온 데이터에 읽음표시 데이터 추가
+    2. 글 클릭시 for문으로 해당 id와 글 전체목록의id 비교하여 읽음표시 true로 변경
