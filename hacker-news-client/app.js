@@ -7,6 +7,7 @@ const container = document.getElementById("root");
 
 const store = {
   currentPage: 1,
+  feeds: [],
 };
 // func api 호출 함수
 function getData(url) {
@@ -17,12 +18,23 @@ function getData(url) {
   // 응답 데이터 가져오기
   return JSON.parse(ajax.response);
 }
+// 읽음 표시 기능 데이터 추가
+function makeFeeds(feeds) {
+  for (let i = 0; i < feeds.length; i++) {
+    feeds[i].read = false;
+  }
+  return feeds;
+}
 // func 글 목록 가져오기
 function newsFeed() {
   // api 뉴스 데이터 가져오기
-  const newsFeed = getData(NEWS_URL);
+  let newsFeed = store.feeds;
   // 10개의 뉴스 타이틀
   const newsList = [];
+  // 데이터 읽어오기
+  if (newsFeed.length == 0) {
+    newsFeed = store.feeds = makeFeeds(getData(NEWS_URL));
+  }
   // 템플릿
   let template = `
   <div class="bg-gray-600 min-h-screen">
@@ -118,6 +130,13 @@ function newsDetail() {
     </div>
   </div>
 `;
+  // id를 통한 읽음 표시 변경
+  for (let i = 0; i < store.feeds.length; i++) {
+    if (store.feeds[i].id === Number(id)) {
+      store.feeds[i].read = true;
+      break;
+    }
+  }
   // func 댓글 목록 함수
   function makeComment(comments, called = 0) {
     const commentString = [];
