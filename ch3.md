@@ -25,3 +25,5 @@
 12. tailwindcss
     1. 주소 `https://tailwindcss.com/docs/installation`
     2. cdN방법 `<script src="https://cdn.tailwindcss.com"></script>`
+13. font awesome
+    1. https://cdnjs.com/에서 font awesome의 cdn 가져오기
