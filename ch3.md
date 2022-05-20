@@ -20,3 +20,8 @@
    2. location.hash값이 #이면 빈문자열을 반환 시킴
 10. 페이징 시스템
 11. 마크업을 위한 템플릿 구현
+    1. 템플릿의 장점 ui요소가 눈에 바로 보임
+    2. ui에 어떤 데이터가 들어가는지가 마캉을 통해 쉽게 알 수 있음
+12. tailwindcss
+    1. 주소 `https://tailwindcss.com/docs/installation`
+    2. cdN방법 `<script src="https://cdn.tailwindcss.com"></script>`
