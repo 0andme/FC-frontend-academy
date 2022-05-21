@@ -1,11 +1,24 @@
-const ajax = new XMLHttpRequest();
-// value urls
+const ajax: XMLHttpRequest = new XMLHttpRequest();
 const NEWS_URL = "https://api.hnpwa.com/v0/news/1.json";
 const CONTENT_URL = "https://api.hnpwa.com/v0/item/@id.json";
+const container: HTMLElement | null = document.getElementById("root");
 
-const container = document.getElementById("root");
+type Store = {
+  currentPage: number;
+  feeds: NewsFeed[];
+};
+type NewsFeed = {
+  id: number;
+  comments_count: number;
+  url: string;
+  user: string;
+  time_ago: string;
+  points: number;
+  title: string;
+  read?: boolean;
+};
 
-const store = {
+const store: Store = {
   currentPage: 1,
   feeds: [],
 };
@@ -25,10 +38,19 @@ function makeFeeds(feeds) {
   }
   return feeds;
 }
+
+// func container update
+function updateView(html) {
+  if (container) {
+    container.innerHTML = html;
+  } else {
+    console.error("최상위 컨테이너가 없습니다");
+  }
+}
 // func 글 목록 가져오기
 function newsFeed() {
   // api 뉴스 데이터 가져오기
-  let newsFeed = store.feeds;
+  let newsFeed: NewsFeed[] = store.feeds;
   // 10개의 뉴스 타이틀
   const newsList = [];
   // 데이터 읽어오기
@@ -96,12 +118,12 @@ function newsFeed() {
       ? newsFeed.length / 10
       : store.currentPage + 1
   );
-  container.innerHTML = template;
-}
 
+  updateView(template);
+}
 // func 뉴스 content 가져오기
 function newsDetail() {
-  const id = this.location.hash.substring(7);
+  const id = location.hash.substring(7);
   const newsContent = getData(CONTENT_URL.replace("@id", id));
   // 클릭된 타이틀의 타이틀 출력
   let template = `
@@ -157,9 +179,8 @@ function newsDetail() {
     }
     return commentString.join("");
   }
-  container.innerHTML = template.replace(
-    "{{__comments__}}",
-    makeComment(newsContent.comments)
+  updateView(
+    template.replace("{{__comments__}}", makeComment(newsContent.comments))
   );
 }
 // func 라우터
