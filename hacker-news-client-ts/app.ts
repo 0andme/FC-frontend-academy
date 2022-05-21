@@ -7,32 +7,44 @@ type Store = {
   currentPage: number;
   feeds: NewsFeed[];
 };
-type NewsFeed = {
+
+type News = {
   id: number;
-  comments_count: number;
+  time_ago: string;
+  title: string;
   url: string;
   user: string;
-  time_ago: string;
-  points: number;
-  title: string;
-  read?: boolean;
+  content: string;
 };
 
+type NewsFeed = News & {
+  comments_count: number;
+  points: number;
+  read?: boolean;
+};
+type NewsDetail = News & {
+  comments: NewsComment[];
+};
+type NewsComment = News & {
+  comments: NewsComment[];
+  level: number;
+};
 const store: Store = {
   currentPage: 1,
   feeds: [],
 };
 // func api 호출 함수
-function getData(url) {
+function getData<AjaxResponse>(url: string): AjaxResponse {
   // 요청 초기화
   ajax.open("GET", url, false);
   //요청 보내기
   ajax.send();
   // 응답 데이터 가져오기
+
   return JSON.parse(ajax.response);
 }
 // 읽음 표시 기능 데이터 추가
-function makeFeeds(feeds) {
+function makeFeeds(feeds: NewsFeed[]): NewsFeed[] {
   for (let i = 0; i < feeds.length; i++) {
     feeds[i].read = false;
   }
@@ -40,7 +52,7 @@ function makeFeeds(feeds) {
 }
 
 // func container update
-function updateView(html) {
+function updateView(html: string): void {
   if (container) {
     container.innerHTML = html;
   } else {
@@ -48,14 +60,14 @@ function updateView(html) {
   }
 }
 // func 글 목록 가져오기
-function newsFeed() {
+function newsFeed(): void {
   // api 뉴스 데이터 가져오기
   let newsFeed: NewsFeed[] = store.feeds;
   // 10개의 뉴스 타이틀
   const newsList = [];
   // 데이터 읽어오기
   if (newsFeed.length == 0) {
-    newsFeed = store.feeds = makeFeeds(getData(NEWS_URL));
+    newsFeed = store.feeds = makeFeeds(getData<NewsFeed[]>(NEWS_URL));
   }
   // 템플릿
   let template = `
@@ -110,21 +122,23 @@ function newsFeed() {
   template = template.replace("{{__news_feed__}}", newsList.join(""));
   template = template.replace(
     "{{__prev_page__}}",
-    store.currentPage > 1 ? store.currentPage - 1 : 1
+    String(store.currentPage > 1 ? store.currentPage - 1 : "1")
   );
   template = template.replace(
     "{{__next_page__}}",
-    store.currentPage === newsFeed.length / 10
-      ? newsFeed.length / 10
-      : store.currentPage + 1
+    String(
+      store.currentPage === newsFeed.length / 10
+        ? newsFeed.length / 10
+        : store.currentPage + 1
+    )
   );
 
   updateView(template);
 }
 // func 뉴스 content 가져오기
-function newsDetail() {
+function newsDetail(): void {
   const id = location.hash.substring(7);
-  const newsContent = getData(CONTENT_URL.replace("@id", id));
+  const newsContent = getData<NewsDetail>(CONTENT_URL.replace("@id", id));
   // 클릭된 타이틀의 타이틀 출력
   let template = `
   <div class="bg-gray-600 min-h-screen pb-8">
@@ -159,32 +173,34 @@ function newsDetail() {
       break;
     }
   }
-  // func 댓글 목록 함수
-  function makeComment(comments, called = 0) {
-    const commentString = [];
-    for (let i = 0; i < comments.length; i++) {
-      commentString.push(`
-        <div style="padding-left: ${called * 40}px;" class="mt-4">
-          <div class="text-gray-400">
-            <i class="fa fa-sort-up mr-2"></i>
-            <strong>${comments[i].user}</strong> ${comments[i].time_ago}
-          </div>
-          <p class="text-gray-700">${comments[i].content}</p>
-        </div>      
-      `);
-      // 재귀 대댓글 호출
-      if (comments[i].comments.length > 0) {
-        commentString.push(makeComment(comments[i].comments, called + 1));
-      }
-    }
-    return commentString.join("");
-  }
+
   updateView(
     template.replace("{{__comments__}}", makeComment(newsContent.comments))
   );
 }
+// func 댓글 목록 함수
+function makeComment(comments: NewsComment[]): string {
+  const commentString = [];
+  for (let i = 0; i < comments.length; i++) {
+    const comment: NewsComment = comments[i];
+    commentString.push(`
+      <div style="padding-left: ${comment.level * 40}px;" class="mt-4">
+        <div class="text-gray-400">
+          <i class="fa fa-sort-up mr-2"></i>
+          <strong>${comment.user}</strong> ${comment.time_ago}
+        </div>
+        <p class="text-gray-700">${comment.content}</p>
+      </div>      
+    `);
+    // 재귀 대댓글 호출
+    if (comment.comments.length > 0) {
+      commentString.push(makeComment(comment.comments));
+    }
+  }
+  return commentString.join("");
+}
 // func 라우터
-function router() {
+function router(): void {
   const routePath = location.hash;
   if (routePath === "") {
     newsFeed();
